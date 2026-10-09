@@ -1,0 +1,15 @@
+{
+  "model": "bytedance/seedance-2.5/text-to-video",
+  "request_id": "8bb5769e-bdda-4a8d-b982-b9a4f8972c2d",
+  "spec_hash": "efb799b686b02fc67dd4f302",
+  "duration": 6,
+  "source": "Higgsfield / Seedance 2.5",
+  "assets": [
+    "hero.mp4",
+    "hero-poster.webp",
+    "detail-ads.webp",
+    "detail-web.webp",
+    "detail-brand.webp",
+    "social.jpg"
+  ]
+}
