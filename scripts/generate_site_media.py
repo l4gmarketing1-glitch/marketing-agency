@@ -62,4 +62,5 @@ ffmpeg('-i', str(source), '-an', '-vf', 'scale=1280:-2,fps=24', '-c:v', 'libx264
 for name, second, width in [('hero-poster.webp', 1.2, 1280), ('detail-ads.webp', 2, 720), ('detail-web.webp', 3.5, 720), ('detail-brand.webp', 5, 720), ('social.jpg', 2, 1200)]:
     ffmpeg('-ss', str(second), '-i', str(source), '-frames:v', '1', '-vf', f'scale={width}:-2', str(output / name))
 manifest.write_text(json.dumps({'model': spec['model'], 'request_id': request_id, 'spec_hash': digest, 'duration': 6, 'source': 'Higgsfield / Seedance 2.5', 'assets': ['hero.mp4', 'hero-poster.webp', 'detail-ads.webp', 'detail-web.webp', 'detail-brand.webp', 'social.jpg']}, indent=2) + '\n')
+(output / 'generation-status.json').unlink(missing_ok=True)
 print('Seedance media generated and optimized. No other generation model was used.')
