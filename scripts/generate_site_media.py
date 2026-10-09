@@ -2,6 +2,8 @@
 import hashlib
 import json
 import subprocess
+import sys
+import traceback
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -13,6 +15,16 @@ spec = json.loads((ROOT / 'assets/seedance/hero.json').read_text())
 assert spec['model'] == 'bytedance/seedance-2.5/text-to-video'
 output = ROOT / 'web/public/media'
 output.mkdir(parents=True, exist_ok=True)
+def report_unhandled(error_type, error, tb):
+    frames = traceback.extract_tb(tb)
+    location = f'{Path(frames[-1].filename).name}:{frames[-1].lineno}' if frames else 'unknown'
+    response = getattr(error, 'response', None)
+    code = getattr(response, 'status_code', None)
+    diagnostic = {'status': 'failed', 'error_type': error_type.__name__, 'location': location, 'http_status': code, 'model': spec['model']}
+    (output / 'generation-status.json').write_text(json.dumps(diagnostic, indent=2) + '\n')
+    print(f'::error title=Seedance media pipeline::{error_type.__name__} at {location}; HTTP status: {code}', flush=True)
+
+sys.excepthook = report_unhandled
 digest = hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest()[:24]
 manifest = output / 'manifest.json'
 if manifest.exists() and json.loads(manifest.read_text()).get('spec_hash') == digest:
@@ -32,6 +44,7 @@ with Higgsfield() as api:
         print(f'::error title=Seedance 2.5::Generation failed: {type(error).__name__}; HTTP status: {code or "not available"}', flush=True)
         (output / 'generation-status.json').write_text(json.dumps({'status': 'failed', 'error_type': type(error).__name__, 'http_status': code, 'model': spec['model']}, indent=2) + '\n')
         raise SystemExit(1)
+print('Result top-level fields: ' + ', '.join(result.keys()), flush=True)
 url = result['video']['url']
 if urlparse(url).scheme != 'https':
     raise SystemExit('Expected an HTTPS media URL')
