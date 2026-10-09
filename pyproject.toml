@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "marketing-agency"
+version = "0.1.0"
+description = "Model-independent Higgsfield generation integration"
+requires-python = ">=3.12"
+dependencies = ["higgsfield-client==0.2.0"]
+
+[project.scripts]
+marketing-higgsfield = "marketing_agency.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

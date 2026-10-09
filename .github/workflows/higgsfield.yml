@@ -1,0 +1,96 @@
+name: Higgsfield tests and manual generation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      generate:
+        description: 'Run a LIVE generation (consumes Higgsfield credits)'
+        type: boolean
+        default: false
+      model:
+        description: 'Higgsfield model endpoint ID'
+        type: string
+        default: higgsfield-ai/soul/v2/standard
+      arguments:
+        description: 'Model-specific inputs as a JSON object'
+        type: string
+        default: '{"prompt":"Editorial portrait in soft daylight"}'
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - name: Install pinned dependencies
+        run: |
+          python -m pip install -r requirements.lock
+          python -m pip install --no-deps -e .
+          python -m pip check
+      - name: Run integration tests (no credentials or charges)
+        run: python -m unittest discover -s tests -v
+      - name: Verify CLI
+        run: marketing-higgsfield --help
+
+  live-generation:
+    if: github.event_name == 'workflow_dispatch' && inputs.generate
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HF_CREDENTIALS: ${{ secrets.HF_CREDENTIALS }}
+      MODEL_ID: ${{ inputs.model }}
+      MODEL_ARGUMENTS: ${{ inputs.arguments }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned dependencies
+        run: |
+          python -m pip install -r requirements.lock
+          python -m pip install --no-deps -e .
+      - name: Validate secret and JSON inputs
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          credential = os.getenv('HF_CREDENTIALS', '')
+          if not credential:
+              raise SystemExit('Add HF_CREDENTIALS under repository Settings > Secrets and variables > Actions.')
+          data = json.loads(os.environ['MODEL_ARGUMENTS'])
+          if not isinstance(data, dict):
+              raise SystemExit('Model arguments must be a JSON object.')
+          Path('model-input.json').write_text(json.dumps(data))
+          PY
+      - name: Submit one generation and wait for its result
+        run: |
+          set -euo pipefail
+          marketing-higgsfield submit \
+            --model "$MODEL_ID" \
+            --input model-input.json \
+            --idempotency-key "github-${GITHUB_REPOSITORY_ID}-${GITHUB_RUN_ID}" > submission.json
+          request_id=$(python -c 'import json; print(json.load(open("submission.json"))["request_id"])')
+          echo "Higgsfield request ID: $request_id"
+          marketing-higgsfield wait "$request_id" --timeout 600 > result.json
+          echo 'Generation completed. Download the result artifact for output URLs.'
+      - name: Save request ID and generation result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: higgsfield-result
+          path: |
+            submission.json
+            result.json
+          if-no-files-found: ignore
+          retention-days: 1
