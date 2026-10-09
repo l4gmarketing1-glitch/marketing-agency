@@ -1,0 +1,13 @@
+{
+  "model": "bytedance/seedance-2.5/text-to-video",
+  "revision": "l4g-hero-001",
+  "arguments": {
+    "prompt": "A premium digital design agency cinematic motion identity, abstract 3D sculpture. Seamless deep near-black studio background (#0b0d0c). A spectacular sculptural folded ribbon, like an impossible geometric orbit made from brushed liquid chrome and translucent emerald glass with very subtle electric chartreuse edge reflections. The sculpture occupies the RIGHT TWO THIRDS of the wide frame; the left third remains completely empty black negative space for typography to be overlaid separately. Beautiful sharp specular highlights, tactile physically accurate materials, sophisticated art direction like a luxury technology brand campaign, path-traced studio rendering. In one continuous ultra-smooth slow motion shot, the ribbon rotates 90 degrees and elegantly unfolds from a compact interlocking knot into an ascending architectural arc, then settles. Camera locked, no camera shake, no cuts. Generous black breathing room around the sculpture. Restrained electric lime green (#d5ff45) glints, never neon overload. Minimal, clean, expensive, sculptural, gallery-like. No text, no letters, no logos, no humans, no interface, no watermark. Six seconds of deliberate, continuous, evenly paced transformation suitable for scrubbing with website scroll. Wide 16:9 composition.",
+    "duration": 6,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9",
+    "bitrate_mode": "high",
+    "output_format": "mp4",
+    "generate_audio": false
+  }
+}
