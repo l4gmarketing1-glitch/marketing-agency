@@ -2,7 +2,7 @@ name: L4G · Seedance 2.5 website media
 on:
   push:
     branches: [main]
-    paths: ['assets/seedance/hero.json']
+    paths: ['assets/seedance/hero.json', 'scripts/generate_site_media.py']
   workflow_dispatch:
 permissions:
   contents: write
@@ -27,6 +27,7 @@ jobs:
           HF_CREDENTIALS: ${{ secrets.HF_CREDENTIALS }}
         run: python scripts/generate_site_media.py
       - name: Save optimized assets in repository
+        if: always()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'

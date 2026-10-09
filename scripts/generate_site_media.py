@@ -29,7 +29,8 @@ with Higgsfield() as api:
         cause = error.__cause__
         response = getattr(cause, 'response', None)
         code = getattr(response, 'status_code', None)
-        print(f'Generation failed: {type(error).__name__}; HTTP status: {code or "not available"}', flush=True)
+        print(f'::error title=Seedance 2.5::Generation failed: {type(error).__name__}; HTTP status: {code or "not available"}', flush=True)
+        (output / 'generation-status.json').write_text(json.dumps({'status': 'failed', 'error_type': type(error).__name__, 'http_status': code, 'model': spec['model']}, indent=2) + '\n')
         raise SystemExit(1)
 url = result['video']['url']
 if urlparse(url).scheme != 'https':
