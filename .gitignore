@@ -6,3 +6,7 @@ __pycache__/
 !.env.example
 build/
 dist/
+node_modules/
+.astro/
+playwright-report/
+test-results/

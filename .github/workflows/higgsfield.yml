@@ -26,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: pip
@@ -52,8 +52,8 @@ jobs:
       MODEL_ID: ${{ inputs.model }}
       MODEL_ARGUMENTS: ${{ inputs.arguments }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Install pinned dependencies
@@ -86,7 +86,7 @@ jobs:
           echo 'Generation completed. Download the result artifact for output URLs.'
       - name: Save request ID and generation result
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: higgsfield-result
           path: |

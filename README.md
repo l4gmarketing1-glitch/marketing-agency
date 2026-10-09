@@ -1,6 +1,6 @@
 # Marketing agency — Higgsfield integration
 
-A server-side Python library and CLI using the [official Higgsfield SDK](https://docs.higgsfield.ai/docs/how-to/sdk). Requires Python 3.12+. No web server is needed.
+A server-side Python library and CLI using the [official Higgsfield SDK](https://docs.higgsfield.ai/docs/how-to/sdk). Requires Python 3.12+. The Python integration needs no server. The L4G website is documented in `web/README.md`.
 
 ## Installation
 
@@ -81,6 +81,10 @@ To generate through GitHub, add a repository Actions secret named `HF_CREDENTIAL
 
 Select **Run a LIVE generation** only when you want a billable API request. Choose any model endpoint and its JSON inputs; otherwise leave the box unchecked to run only tests. The workflow submits one request, waits up to ten minutes, and stores request/result JSON in a `higgsfield-result` artifact for one day. Download it to obtain generated asset URLs. Re-running the same workflow run retains its idempotency key; starting a new run creates a new generation. Timeout does not cancel the remote job. Generated media URLs may expire according to provider retention.
 
-Tests cover arbitrary models and nested inputs, authentication wiring, model defaults, polling, terminal failures, timeouts, cancellation, idempotency, prevention of automatic submission retries, and credential isolation on uploads. Installation and CLI help are validated without credentials. Live authentication, generation, model access, and uploads remain pending credentials and runtime network configuration.
+Tests cover arbitrary models and nested inputs, authentication wiring, model defaults, polling, terminal failures, timeouts, cancellation, idempotency, prevention of automatic submission retries, and credential isolation on uploads. Installation and CLI help are validated without credentials. Live generation with Seedance 2.5 has been verified through GitHub Actions using its HF_CREDENTIALS secret. The cloud shell does not currently receive that secret; uploads and access to other models remain separate checks.
 
 References: [SDK](https://docs.higgsfield.ai/docs/how-to/sdk), [authentication](https://docs.higgsfield.ai/docs/authentication), [idempotency](https://docs.higgsfield.ai/docs/concepts/idempotency), [uploads](https://docs.higgsfield.ai/docs/concepts/file-uploads), [SDK source](https://github.com/higgsfield-ai/higgsfield-client).
+
+## L4G presentation website
+
+The Romanian L4G website is in [`web/`](web/README.md). It includes service pages, contact links, responsive layouts, accessible interactions, technical SEO and a scroll-controlled hero generated with **Seedance 2.5**. See the website README for local development, GitHub Pages preview activation and production deployment.

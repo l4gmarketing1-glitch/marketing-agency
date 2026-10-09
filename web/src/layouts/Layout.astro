@@ -1,0 +1,41 @@
+---
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/space-grotesk';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+const { title = 'L4G — Google Ads, Web Design & Branding', description = 'Strategie, design și performanță pentru branduri care vor să crească. L4G: agenție de Google Ads, web design, development și branding. Hai să vorbim.', noindex = false, schema } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const business = { '@context':'https://schema.org', '@type':'ProfessionalService', '@id':'https://l4g.ro/#agency', name:'L4G', url:'https://l4g.ro', telephone:'+40755436284', email:'contact@l4g.ro', description:'Agenție de Google Ads, web design, development și branding.', areaServed:{'@type':'Country',name:'România'}, contactPoint:{'@type':'ContactPoint',telephone:'+40755436284',contactType:'customer service',availableLanguage:'Romanian'}, hasOfferCatalog:{'@type':'OfferCatalog',name:'Servicii L4G',itemListElement:['Google Ads','Web design și development','Branding'].map(name=>({'@type':'Offer',itemOffered:{'@type':'Service',name}}))} };
+---
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101210" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow,max-image-preview:large'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ro_RO" />
+    <meta property="og:site_name" content="L4G" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="https://l4g.ro/media/social.jpg" />
+    <meta property="og:image:alt" content="Identitatea vizuală L4G — sculptură digitală din crom și sticlă verde" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(business).replace(/</g,'\\u003c')} />
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g,'\\u003c')} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Sari la conținut</a>
+    <Header />
+    <main id="main"><slot /></main>
+    <Footer />
+    <script>import '../scripts/site.ts';</script>
+  </body>
+</html>

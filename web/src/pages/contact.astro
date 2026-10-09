@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Contact L4G — Hai să construim ceva" description="Ai un proiect de Google Ads, web design sau branding? Vorbește cu L4G: 0755 436 284 sau contact@l4g.ro. Povestește-ne ce vrei să construiești.">
+  <section class="inner-hero"><div class="breadcrumbs"><a href="/">Acasă</a><span>/</span><span>Contact</span></div><div class="eyebrow"><span class="status-dot"></span> ÎNCEPĂM CU O CONVERSAȚIE</div><h1>Ideea ta.<br /><em>Următorul nostru proiect.</em></h1><p class="lead">Spune-ne unde ești și unde vrei să ajungi. Găsim împreună primul pas.</p></section>
+  <section class="contact-layout section-pad"><div class="contact-direct"><h2>Direct.<br />Fără ocolișuri.</h2><a href="mailto:contact@l4g.ro">contact@l4g.ro <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></a><a href="tel:+40755436284">0755 436 284 <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></a><a href="https://wa.me/40755436284" target="_blank" rel="noopener noreferrer">Scrie-ne pe WhatsApp <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></a><p>Preferi să scrii câteva idei mai întâi? Completează brief-ul și trimite-l din aplicația ta de email.</p></div>
+  <form id="brief-form" class="contact-form" action="mailto:contact@l4g.ro" method="get">
+    <div class="field"><label for="name">Numele tău *</label><input id="name" name="name" autocomplete="name" placeholder="Cum te numești?" required maxlength="100" /></div>
+    <div class="field"><label for="email">Adresa de email *</label><input id="email" name="email" type="email" autocomplete="email" placeholder="tu@companie.ro" required maxlength="150" /></div>
+    <div class="field full-width"><label for="service">Cu ce te putem ajuta? *</label><select id="service" name="service" required><option value="">Alege un serviciu</option><option value="Google Ads">Google Ads</option><option value="Web Design & Development">Web Design & Development</option><option value="Branding">Branding</option><option value="Un proiect complet">Un proiect complet</option></select></div>
+    <div class="field full-width"><label for="message">Câteva cuvinte despre proiect *</label><textarea id="message" name="message" placeholder="Ce vrei să construiești? Care este obiectivul tău?" required minlength="15" maxlength="4000" rows="5"></textarea></div>
+    <p class="form-note full-width">Butonul deschide aplicația ta de email cu mesajul pregătit. Datele sunt trimise doar când expediezi emailul. <a href="/confidentialitate/">Despre confidențialitate.</a></p>
+    <button class="button button-dark full-width" type="submit">Pregătește emailul <span aria-hidden="true"><svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></span></button>
+    <p id="form-status" class="form-status full-width" role="status" aria-live="polite"></p>
+    <noscript><p class="form-note full-width">Pentru a trimite brief-ul fără JavaScript, scrie direct la <a href="mailto:contact@l4g.ro">contact@l4g.ro</a>.</p></noscript>
+  </form></section>
+  <script>
+    const values:Record<string,string>={'google-ads':'Google Ads','web-design':'Web Design & Development',branding:'Branding'};
+    const param=new URLSearchParams(location.search).get('serviciu');
+    const select=document.querySelector<HTMLSelectElement>('#service');
+    if(param && values[param] && select)select.value=values[param];
+  </script>
+</Layout>

@@ -1,0 +1,84 @@
+name: L4G · Website checks & preview
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', '.github/workflows/website.yml']
+  pull_request:
+    paths: ['web/**', '.github/workflows/website.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: l4g-website-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Browser, accessibility and SEO checks
+        run: npm test
+      - uses: actions/upload-artifact@v6
+        with:
+          name: l4g-production-site
+          path: web/dist/
+          retention-days: 7
+  preview:
+    if: github.event_name != 'pull_request'
+    needs: check
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Build preview
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+          node scripts/prepare-preview.mjs
+      - name: Publish preview branch
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          preview_dir=$(mktemp -d)
+          cp -a web/dist/. "$preview_dir/"
+          if git ls-remote --exit-code origin refs/heads/gh-pages >/dev/null 2>&1; then
+            git fetch origin gh-pages
+            git checkout --detach FETCH_HEAD
+          else
+            git switch --orphan gh-pages
+          fi
+          git rm -r --ignore-unmatch .
+          # This is the disposable Actions checkout; compiled output is in /tmp.
+          git clean -fdx
+          cp -a "$preview_dir/." .
+          git add .
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish validated L4G website preview"
+            git push origin HEAD:gh-pages
+          fi
+          echo 'Preview branch updated. Enable Settings → Pages → Deploy from a branch → gh-pages / root if Pages is not enabled yet.' >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,20 @@
+---
+const home = Astro.url.pathname === '/';
+---
+<header class="site-header" id="header">
+  <a href="/" class="wordmark" aria-label="L4G — pagina principală">L4G<span class="brand-dot"></span></a>
+  <nav class="desktop-nav" aria-label="Navigare principală">
+    <a href={home ? '#servicii' : '/#servicii'}>Expertiză</a>
+    <a href={home ? '#abordare' : '/#abordare'}>Cum lucrăm</a>
+    <a href={home ? '#despre' : '/#despre'}>Despre L4G</a>
+  </nav>
+  <a class="header-contact" href="/contact/">Hai să vorbim <span aria-hidden="true"><svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></span></a>
+  <button class="menu-toggle" aria-label="Deschide meniul" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
+  <nav id="mobile-nav" class="mobile-nav" aria-label="Navigare mobilă" hidden>
+    <a href="/#servicii">Expertiză <span>01</span></a>
+    <a href="/#abordare">Cum lucrăm <span>02</span></a>
+    <a href="/#despre">Despre L4G <span>03</span></a>
+    <a href="/contact/">Hai să vorbim <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></a>
+    <a class="mobile-phone" href="tel:+40755436284">0755 436 284</a>
+  </nav>
+</header>
