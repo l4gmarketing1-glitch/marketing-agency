@@ -1,6 +1,6 @@
 # L4G presentation website
 
-Static Romanian website built with Astro, self-hosted variable fonts, and a small TypeScript interaction layer. All generated imagery comes from one Higgsfield **Seedance 2.5** video. The hero scrubs its timeline as visitors scroll. Posters and service stills are extracted with FFmpeg; no other generation model is used.
+Static Romanian website built with Astro, self-hosted variable fonts, and a small TypeScript interaction layer. The current creative-studio design uses native CSS 3D geometry: campaign boards, a dimensional frame, web layouts and brand materials. Scroll moves the camera through three narrative chapters. It requires no video, external renderer, API credentials or runtime generation. The user explicitly chose to continue without video while Higgsfield API credits are unavailable. Only Higgsfield **Seedance 2.5** is permitted for future generated media.
 
 ## Local development
 
@@ -18,7 +18,7 @@ npx playwright install chromium
 npm test
 ```
 
-In the managed cloud machine use `npm --cache /tmp/l4g-npm` if its default cache is not writable. For installed system Chromium use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm test`. Browser tests cover navigation, mobile widths, contact validation, reduced motion, accessibility, SEO files and actual video scrubbing.
+In the managed cloud machine use `npm --cache /tmp/l4g-npm` if its default cache is not writable. For installed system Chromium use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm test`. Browser tests cover navigation, mobile widths, contact validation, reduced motion, accessibility, SEO files and the active hero (CSS camera movement, or real video scrubbing when a complete Seedance asset set is present).
 
 ## GitHub preview
 
@@ -34,16 +34,21 @@ The Action also stores `l4g-production-site`, containing the root-path productio
 - Service content: `src/pages/servicii/[slug].astro`
 - Contact: `src/pages/contact.astro`
 - Shared SEO and agency schema: `src/layouts/Layout.astro`
-- Styling: `src/styles/global.css`
+- Styling: `src/styles/global.css` and `src/styles/studio.css`
+- Native 3D scene: `src/components/StudioScene.astro`
 - Scroll, navigation and form interactions: `src/scripts/site.ts`
 
 The contact form opens a prefilled email. It **does not** send mail from a backend or claim that a message was delivered. Phone and WhatsApp links are also available. No analytics, ad pixels, external font requests or browser storage are configured. The privacy text describes this implementation; add the company's full legal identity and verify its retention/hosting details before public commercial launch.
 
 ## Media provenance and regeneration
 
-`public/media/manifest.json` records the exact model, generation request ID and specification hash. `assets/seedance/hero.json` at repository root contains the creative direction and input schema. The media Action runs when the specification/pipeline changes, uses the existing Actions secret `HF_CREDENTIALS`, and commits optimized media. It skips an existing matching generation; repeated requests with the same specification use the same idempotency key. Changes to the specification are a **billable generation intent**. Only Seedance 2.5 is permitted by the script.
+The old chrome concept remains archived in `public/media/`; the redesigned pages do not load it. No client projects or performance results are implied by the conceptual campaign graphics. `public/studio-social.png` is a browser capture of our own HTML/CSS scene, not AI-generated imagery.
 
-The browser fetches the lightweight poster first. The 6-second H.264 video uses frequent keyframes for seeking and is deferred until idle. Reduced-motion and Save-Data users keep the still. A visible motion toggle provides user control. There are no scroll-jacking wheel handlers.
+The planned cinematic specification is `assets/seedance/studio.json` at repository root. Its generation failed because the Higgsfield API balance was insufficient; sanitized diagnostics are in `public/media/studio/generation-status.json`. The API key itself worked. The working Actions secret remains `HF_CREDENTIALS`.
+
+To generate the new clip **after funding the API account and intentionally authorizing another paid attempt**: open **Actions → L4G · Creative studio — Seedance 2.5 → Run workflow**, choose `main`, and enable `retry_failed`. Leave it disabled to resume/check the recorded job without starting another attempt. Re-running the same Action retains its attempt identifier. The generator persists the request ID before waiting, reuses idempotency keys, and skips a matching completed asset set. It permits only `bytedance/seedance-2.5/text-to-video`.
+
+A complete generated set in `public/media/studio/` automatically enables the video and extracted stills at the next website build. `src/lib/studio-media.ts` requires all files, preventing partial generations from causing broken images. Inspect the resulting art direction before publishing it. While the native studio is active, its interaction is tested; paid-video validation is not claimed. Reduced-motion visitors receive a stationary scene, and the motion button can stop all animation. There are no wheel handlers that hijack scrolling. For future video, the poster is prioritized and video is deferred until idle; reduced-motion and Save-Data users retain the poster.
 
 ## SEO launch checks
 

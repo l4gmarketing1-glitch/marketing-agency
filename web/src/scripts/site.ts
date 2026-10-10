@@ -29,6 +29,9 @@ const hero = document.querySelector<HTMLElement>('.hero-scroll');
 const video = document.querySelector<HTMLVideoElement>('#hero-video');
 const bar = document.querySelector<HTMLElement>('.hero-progress span');
 const chapters = [...document.querySelectorAll<HTMLElement>('.hero-chapters span')];
+const opening = document.querySelector<HTMLElement>('.studio-opening');
+const sceneChapters = [...document.querySelectorAll<HTMLElement>('.scene-chapter')];
+const sceneNumber = document.querySelector<HTMLElement>('#scene-number');
 const motionButton = document.querySelector<HTMLButtonElement>('.motion-toggle');
 let target = 0;
 let scheduled = false;
@@ -46,8 +49,18 @@ function updateHero() {
   const rect = hero.getBoundingClientRect();
   target = Math.max(0,Math.min(1,-rect.top / Math.max(1,hero.offsetHeight - innerHeight)));
   if(bar) bar.style.transform = `scaleX(${target})`;
-  hero.style.setProperty('--hero-progress',String(target));
+  hero.style.setProperty('--hero-progress',String(motion ? target : 0));
   chapters.forEach((el,i)=>el.classList.toggle('active',i===Math.min(2,Math.floor(target*3))));
+  const storyProgress = motion ? target : 0;
+  if (opening) {
+    opening.style.opacity = String(Math.max(0, 1 - storyProgress * 4.5));
+    opening.style.transform = `translateY(${-storyProgress * 100}px) scale(${1 - storyProgress * .08})`;
+    opening.style.pointerEvents = storyProgress > .22 ? 'none' : 'auto';
+    opening.querySelectorAll<HTMLAnchorElement>('a').forEach(a => a.tabIndex = storyProgress > .22 ? -1 : 0);
+  }
+  const chapterIndex = Math.min(2, Math.max(0, Math.floor((storyProgress - .23) / .25)));
+  sceneChapters.forEach((el, i) => el.classList.toggle('is-active', storyProgress > .24 && storyProgress < .98 && i === chapterIndex));
+  if (sceneNumber) sceneNumber.textContent = String(chapterIndex + 1).padStart(2, '0');
   if (rect.bottom > 0 && rect.top < innerHeight) seek();
 }
 function schedule() { if(!scheduled) {scheduled=true; requestAnimationFrame(updateHero);} }
@@ -68,10 +81,10 @@ if(hero){
 }
 function setMotion(enabled:boolean) {
   motion=enabled; root.classList.toggle('motion-off',!enabled);
-  motionButton?.setAttribute('aria-pressed',String(!enabled));
-  motionButton?.setAttribute('aria-label',enabled?'Mișcare: oprește animațiile':'Mișcare: pornește animațiile');
+  motionButton?.setAttribute('aria-pressed',String(enabled));
+  motionButton?.setAttribute('aria-label',enabled?'Mișcare ON: oprește animațiile':'Mișcare OFF: pornește animațiile');
   const label=motionButton?.querySelector('span'); if(label)label.textContent=enabled?'ON':'OFF';
-  if(enabled){loadVideo();schedule()} else {reveals.forEach(el=>el.classList.add('visible'));video?.pause();}
+  if(enabled){loadVideo();schedule()} else {reveals.forEach(el=>el.classList.add('visible'));video?.pause();schedule();}
 }
 motionButton?.addEventListener('click',()=>setMotion(!motion));
 reduced.addEventListener('change',e=>setMotion(!e.matches));
@@ -100,4 +113,26 @@ form?.addEventListener('submit',e=>{
   const emailLink=document.createElement('a');
   emailLink.href=url; emailLink.target='_blank'; emailLink.rel='noopener noreferrer';
   emailLink.click();
+});
+
+const labContent: Record<string, {index: string; title: string[]; copy: string; path: string}> = {
+  ads: {index:'01 / GOOGLE ADS',title:['Aduci oamenii','potriviți.'],copy:'Campaniile atrag atenția. Website-ul transformă interesul în acțiune, iar brandul dă un motiv să fii ales.',path:'/servicii/google-ads/'},
+  web: {index:'02 / WEB DESIGN',title:['Faci următorul pas','să pară firesc.'],copy:'Un website bun continuă promisiunea din reclamă. Clarifică oferta, exprimă brandul și face contactul sau cumpărarea ușoare.',path:'/servicii/web-design/'},
+  brand: {index:'03 / BRANDING',title:['Dai un motiv','să fii ținut minte.'],copy:'Identitatea leagă toate punctele de contact. Aceeași personalitate în campanie, pe website și în mintea oamenilor.',path:'/servicii/branding/'},
+};
+document.querySelectorAll<HTMLButtonElement>('[data-lab]').forEach(button => {
+  button.addEventListener('click', () => {
+    const content = labContent[button.dataset.lab!];
+    document.querySelectorAll<HTMLButtonElement>('[data-lab]').forEach(node => {
+      node.classList.toggle('active', node === button);
+      node.setAttribute('aria-pressed', String(node === button));
+    });
+    document.querySelector('#lab-index')!.textContent = content.index;
+    document.querySelector('#lab-copy')!.textContent = content.copy;
+    const heading = document.querySelector('#lab-heading')!;
+    heading.replaceChildren(document.createTextNode(content.title[0]), document.createElement('br'), document.createTextNode(content.title[1]));
+    const link = document.querySelector<HTMLAnchorElement>('#lab-link')!;
+    const prefix = location.pathname.startsWith('/marketing-agency/') ? '/marketing-agency' : '';
+    link.href = prefix + content.path;
+  });
 });

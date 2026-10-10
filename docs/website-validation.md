@@ -1,16 +1,23 @@
-# L4G website validation
+# L4G creative-studio redesign — validation
 
-Validated 10 October 2026 (Europe/Bucharest).
+Validated 10 October 2026. These results supersede the earlier chrome/green design.
 
 - Production build: 7 static HTML pages.
-- Browser tests: 7 passed, using Chromium. Includes desktop/mobile navigation, contact validation, reduced motion, actual video scrubbing, content without JavaScript, and axe accessibility checks.
-- Existing Python integration tests: 14 passed.
-- GitHub workflow validation: actionlint passed.
-- npm production dependency audit: no vulnerabilities reported.
-- Lighthouse mobile simulation, local production server, with the real generated media: Performance **99**, Accessibility **100**, Best Practices **100**, SEO **100**. LCP **1.6 s**, CLS **0.004**, total blocking time **0 ms**, transfer size **538 KiB**. These are lab measurements, not live-domain field results or ranking guarantees.
-- Seedance video: 6.04 seconds, 1280×720 H.264, 428,959 bytes, no audio. Hero poster: 7,684 bytes. Media provenance: `web/public/media/manifest.json`.
-- GitHub Pages subpath preview verified locally: navigation, fonts, media, contact and noindex metadata work; no HTTP errors observed.
+- Chromium browser suite: **9 passed**. Desktop/mobile navigation, contact form validation, reduced motion, no horizontal overflow at 360/768/1440px, accessible service/contact/home content, SEO files, CSS camera movement, scroll chapters, keyboard operation of the connected-services section, and motion controls.
+- Python integration suite: **14 passed**. No live paid API calls in this suite.
+- GitHub workflow syntax: actionlint passed.
+- Lighthouse mobile simulation on the local production server: **99 Performance / 100 Accessibility / 100 Best Practices / 100 SEO**. LCP **1.7 s**, CLS **0.001**, total blocking time **0 ms**, transferred **106 KiB**. These are lab results for the current CSS scene, not production field measurements or ranking guarantees.
+- GitHub Pages subpath preview checked locally: styles/fonts, navigation, interactive service destinations, contact and noindex metadata; no HTTP or JavaScript errors.
+- Visual captures: `docs/l4g-hero.png`, `docs/l4g-desktop.png`, `docs/l4g-mobile.png`. Full-page captures use reduced motion to expose all content without sticky overlap.
 
-Desktop and mobile captures are `docs/l4g-desktop.png` and `docs/l4g-mobile.png`.
+## Current media status
 
-Remaining launch configuration: set GitHub Pages Source to GitHub Actions and manually run the website workflow; connect the approved production hosting/domain, verify legal entity information, and submit the production sitemap in the domain owner's Search Console. The contact form opens the user's email application; it is not a server-side mail service.
+The user explicitly chose to continue **without video generation** after Higgsfield returned insufficient API credit balance. The current site renders a lightweight native CSS 3D studio, with no generated video, no WebGL dependency and no paid calls from the browser. Its campaign graphics are concepts, not client projects. The social image is a browser screenshot of that scene. No alternative AI model was used.
+
+The new Seedance prompt and workflow are prepared. The failed request and sanitized provider error are recorded in `web/public/media/studio/`. The prior chrome assets remain archived under `web/public/media/` and are no longer loaded by the site. A complete new studio media set will enable video at build time; its appearance and real video scrubbing must be validated before publication. Current validation does **not** claim that the new Seedance video succeeded.
+
+## Publication
+
+Source changes alone do not update GitHub Pages. Run **L4G · Website checks & preview** manually on `main` to validate and deploy the current preview. Repository Pages Source must be **GitHub Actions**. A green push run means checks passed; its preview job is intentionally skipped.
+
+No production domain or DNS changes were made. Before a commercial launch at l4g.ro, verify hosting, legal entity details and Search Console ownership. The contact form prepares a message in the visitor's email application; it is not backend email delivery.

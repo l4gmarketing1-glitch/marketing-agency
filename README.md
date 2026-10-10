@@ -87,4 +87,4 @@ References: [SDK](https://docs.higgsfield.ai/docs/how-to/sdk), [authentication](
 
 ## L4G presentation website
 
-The Romanian L4G website is in [`web/`](web/README.md). It includes service pages, contact links, responsive layouts, accessible interactions, technical SEO and a scroll-controlled hero generated with **Seedance 2.5**. See the website README for local development, GitHub Pages preview activation and production deployment.
+The Romanian L4G website is in [`web/`](web/README.md). It includes service pages, contact links, responsive layouts, accessible interactions, technical SEO and a scroll-controlled CSS 3D creative studio, with optional **Seedance 2.5** video integration. See the website README for local development, GitHub Pages preview activation and production deployment.
