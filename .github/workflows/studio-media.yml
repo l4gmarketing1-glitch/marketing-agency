@@ -2,7 +2,7 @@ name: L4G · Creative studio — Seedance 2.5
 on:
   push:
     branches: [main]
-    paths: ['assets/seedance/studio.json', '.github/workflows/studio-media.yml']
+    paths: ['assets/seedance/studio.json', 'scripts/generate_site_media.py', '.github/workflows/studio-media.yml']
   workflow_dispatch:
 permissions:
   contents: write

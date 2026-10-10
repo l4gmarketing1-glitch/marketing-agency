@@ -2,6 +2,8 @@
 import argparse
 import hashlib
 import json
+import os
+import re
 import subprocess
 import sys
 import traceback
@@ -36,9 +38,27 @@ if manifest.exists() and json.loads(manifest.read_text()).get('spec_hash') == di
     print('The requested Seedance assets already exist; no generation needed.')
     raise SystemExit(0)
 
+journal = output / 'request.json'
+request_id = None
+if journal.exists():
+    saved = json.loads(journal.read_text())
+    if saved.get('spec_hash') == digest:
+        request_id = saved.get('request_id')
+
+def safe_detail(value):
+    text = str(value)
+    for name in ('HF_KEY', 'HF_CREDENTIALS', 'HF_API_KEY', 'HF_API_SECRET'):
+        secret = os.getenv(name)
+        if secret:
+            text = text.replace(secret, '[redacted]')
+    text = re.sub(r'https?://\S+', '[url omitted]', text)
+    return text[:600]
+
 with Higgsfield() as api:
     try:
-        request_id = api.submit(spec['arguments'], model=spec['model'], idempotency_key=f'l4g-site-{digest}')
+        if not request_id:
+            request_id = api.submit(spec['arguments'], model=spec['model'], idempotency_key=f'l4g-site-{digest}')
+            journal.write_text(json.dumps({'request_id': request_id, 'spec_hash': digest}, indent=2) + '\n')
         print(f'Seedance request: {request_id}', flush=True)
         result = api.wait(request_id, timeout=1200, poll_interval=5)
     except Exception as error:
@@ -47,7 +67,19 @@ with Higgsfield() as api:
         response = getattr(cause, 'response', None)
         code = getattr(response, 'status_code', None)
         print(f'::error title=Seedance 2.5::Generation failed: {type(error).__name__}; HTTP status: {code or "not available"}', flush=True)
-        (output / 'generation-status.json').write_text(json.dumps({'status': 'failed', 'error_type': type(error).__name__, 'http_status': code, 'model': spec['model']}, indent=2) + '\n')
+        diagnostic = {'status': 'failed', 'error_type': type(error).__name__, 'http_status': code, 'model': spec['model'], 'request_id': request_id}
+        if request_id:
+            try:
+                controller = api.client.get_request_controller(request_id)
+                data = api.client._transport.request('GET', controller.status_url).json()
+                diagnostic['provider_status'] = safe_detail(data.get('status', 'unknown'))
+                diagnostic['provider_fields'] = sorted(data.keys())
+                for field in ('error', 'error_code', 'message', 'detail'):
+                    if data.get(field) is not None:
+                        diagnostic[field] = safe_detail(data[field])
+            except Exception as status_error:
+                diagnostic['status_read_error'] = type(status_error).__name__
+        (output / 'generation-status.json').write_text(json.dumps(diagnostic, indent=2) + '\n')
         raise SystemExit(1)
 print('Result top-level fields: ' + ', '.join(result.keys()), flush=True)
 url = result['video']['url']
