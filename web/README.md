@@ -22,7 +22,7 @@ In the managed cloud machine use `npm --cache /tmp/l4g-npm` if its default cache
 
 ## GitHub preview
 
-The **L4G · Website checks & preview** Action builds and tests the site on `main` changes. When checks pass, it publishes a preview build to the `gh-pages` branch. Enable the preview once in repository **Settings → Pages → Build and deployment → Deploy from a branch → gh-pages → /(root) → Save**.
+The **L4G · Website checks & preview** Action builds and tests the site on `main` changes. To publish a preview, first set repository **Settings → Pages → Build and deployment → Source → GitHub Actions**. Then open **Actions → L4G · Website checks & preview → Run workflow → main → Run workflow**. The manual run validates the site and publishes it through the official GitHub Pages deployment actions. This does not generate new media or consume Higgsfield credits. Automatic push/PR runs execute checks only; publish each approved update with a manual run. The earlier `gh-pages` branch is retained as a snapshot and is no longer the deployment mechanism.
 
 Expected preview URL after GitHub confirms deployment: `https://l4gmarketing1-glitch.github.io/marketing-agency/`. The preview carries `noindex` and production canonical URLs, so it does not compete with the eventual real domain. Preview links and media paths are rewritten for the repository subpath by `scripts/prepare-preview.mjs`.
 

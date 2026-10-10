@@ -38,11 +38,17 @@ jobs:
           path: web/dist/
           retention-days: 7
   preview:
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     needs: check
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     permissions:
-      contents: write
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     env:
       ASTRO_TELEMETRY_DISABLED: '1'
     steps:
@@ -52,33 +58,18 @@ jobs:
           node-version: '24'
           cache: npm
           cache-dependency-path: web/package-lock.json
-      - name: Build preview
+      - name: Check GitHub Pages configuration
+        uses: actions/configure-pages@v5
+      - name: Build non-indexable preview
         working-directory: web
         run: |
           npm ci
           npm run build
           node scripts/prepare-preview.mjs
-      - name: Publish preview branch
-        env:
-          REPOSITORY: ${{ github.repository }}
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          preview_dir=$(mktemp -d)
-          cp -a web/dist/. "$preview_dir/"
-          if git ls-remote --exit-code origin refs/heads/gh-pages >/dev/null 2>&1; then
-            git fetch origin gh-pages
-            git checkout --detach FETCH_HEAD
-          else
-            git switch --orphan gh-pages
-          fi
-          git rm -r --ignore-unmatch .
-          # This is the disposable Actions checkout; compiled output is in /tmp.
-          git clean -fdx
-          cp -a "$preview_dir/." .
-          git add .
-          if ! git diff --cached --quiet; then
-            git commit -m "Publish validated L4G website preview"
-            git push origin HEAD:gh-pages
-          fi
-          echo 'Preview branch updated. Enable Settings → Pages → Deploy from a branch → gh-pages / root if Pages is not enabled yet.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload website for Pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: web/dist/
+      - name: Publish website
+        id: deployment
+        uses: actions/deploy-pages@v4

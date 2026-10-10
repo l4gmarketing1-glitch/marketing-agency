@@ -13,4 +13,4 @@ Validated 10 October 2026 (Europe/Bucharest).
 
 Desktop and mobile captures are `docs/l4g-desktop.png` and `docs/l4g-mobile.png`.
 
-Remaining launch configuration: activate GitHub Pages for gh-pages if it is not enabled; connect the approved production hosting/domain, verify legal entity information, and submit the production sitemap in the domain owner's Search Console. The contact form opens the user's email application; it is not a server-side mail service.
+Remaining launch configuration: set GitHub Pages Source to GitHub Actions and manually run the website workflow; connect the approved production hosting/domain, verify legal entity information, and submit the production sitemap in the domain owner's Search Console. The contact form opens the user's email application; it is not a server-side mail service.
