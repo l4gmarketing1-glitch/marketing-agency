@@ -1,4 +1,5 @@
 """Generate L4G media only with Higgsfield Seedance 2.5, then optimize locally."""
+import argparse
 import hashlib
 import json
 import subprocess
@@ -11,9 +12,13 @@ import httpx
 from marketing_agency.higgsfield import Higgsfield
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = json.loads((ROOT / 'assets/seedance/hero.json').read_text())
+parser = argparse.ArgumentParser()
+parser.add_argument('--spec', default='assets/seedance/hero.json')
+parser.add_argument('--output', default='web/public/media')
+args = parser.parse_args()
+spec = json.loads((ROOT / args.spec).read_text())
 assert spec['model'] == 'bytedance/seedance-2.5/text-to-video'
-output = ROOT / 'web/public/media'
+output = ROOT / args.output
 output.mkdir(parents=True, exist_ok=True)
 def report_unhandled(error_type, error, tb):
     frames = traceback.extract_tb(tb)
@@ -59,8 +64,8 @@ def ffmpeg(*args):
     subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', *args], check=True)
 
 ffmpeg('-i', str(source), '-an', '-vf', 'scale=1280:-2,fps=24', '-c:v', 'libx264', '-preset', 'slow', '-crf', '25', '-g', '6', '-keyint_min', '6', '-sc_threshold', '0', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(output / 'hero.mp4'))
-for name, second, width in [('hero-poster.webp', 1.2, 1280), ('detail-ads.webp', 2, 720), ('detail-web.webp', 3.5, 720), ('detail-brand.webp', 5, 720), ('social.jpg', 2, 1200)]:
+for name, second, width in [('hero-poster.webp', 0, 1280), ('detail-ads.webp', 1.5, 960), ('detail-web.webp', 3.5, 960), ('detail-brand.webp', 6, 960), ('social.jpg', 0, 1200)]:
     ffmpeg('-ss', str(second), '-i', str(source), '-frames:v', '1', '-vf', f'scale={width}:-2', str(output / name))
-manifest.write_text(json.dumps({'model': spec['model'], 'request_id': request_id, 'spec_hash': digest, 'duration': 6, 'source': 'Higgsfield / Seedance 2.5', 'assets': ['hero.mp4', 'hero-poster.webp', 'detail-ads.webp', 'detail-web.webp', 'detail-brand.webp', 'social.jpg']}, indent=2) + '\n')
+manifest.write_text(json.dumps({'model': spec['model'], 'request_id': request_id, 'spec_hash': digest, 'duration': spec['arguments']['duration'], 'source': 'Higgsfield / Seedance 2.5', 'assets': ['hero.mp4', 'hero-poster.webp', 'detail-ads.webp', 'detail-web.webp', 'detail-brand.webp', 'social.jpg']}, indent=2) + '\n')
 (output / 'generation-status.json').unlink(missing_ok=True)
 print('Seedance media generated and optimized. No other generation model was used.')

@@ -1,0 +1,13 @@
+{
+  "model": "bytedance/seedance-2.5/text-to-video",
+  "revision": "l4g-creative-studio-v2-001",
+  "arguments": {
+    "prompt": "An extraordinary cinematic journey INSIDE a contemporary creative agency's surreal art-direction studio, like a high-end live-action commercial mixed with architectural CGI. Fill the ENTIRE wide frame with a richly composed, expansive physical world of advertising, graphic design and branding. Warm ivory gallery architecture, very tall windows on the left casting sharp afternoon sunlight and long shadows on polished concrete. A monumental freestanding vermilion-orange rectangular doorway is the central visual anchor, with a cobalt-blue wall beyond it. To the right, an oversized vertical advertising lightbox displays a beautiful close-up orange citrus photographic campaign, no writing. To the left, elegant oversized graphic design boards lean in layers, showing bold black-and-white geometric editorial layouts with orange circles, no writing. Several sculptural blank cosmetic packaging bottles and premium embossed paper swatches sit on low block plinths. A giant floating landscape glass display on the middle right shows a beautifully composed abstract magazine layout using orange and blue rectangles and photographic botanical textures, no words. Large white frames overlap into the background, creating multiple layers of real perspective. Impeccable architecture and art-direction, editorial magazine quality, believable rich materials, tasteful composition, warm sunbeams and subtle shadows, big architectural scale, no small object floating in empty black space. Start with a striking very wide 24mm lens view of the complete designed studio. Camera steadily dollies forward in ONE fluid, uninterrupted motion through the monumental orange doorway, revealing the cobalt-blue and cream design gallery behind it, then glides toward a dramatic wall of layered graphic campaign panels and sculptural product packaging. The scene should feel alive through very slight suspended panel movements, but all geometry remains solid and coherent. Eight seconds, no cuts, no fades, no flashy transitions, no people. Smooth evenly paced camera motion designed to be controlled by website scroll. Warm white, vivid vermilion-orange and cobalt-blue palette. Rich designed scene, not minimal black background, not chrome, no chains, no ribbons, no rings, no knots, no jewelry, no metallic abstract sculpture. No text, no logos, no watermark. 16:9 cinematic composition, exceptionally beautiful first frame.",
+    "duration": 8,
+    "resolution": "1080p",
+    "aspect_ratio": "16:9",
+    "bitrate_mode": "high",
+    "output_format": "mp4",
+    "generate_audio": false
+  }
+}
