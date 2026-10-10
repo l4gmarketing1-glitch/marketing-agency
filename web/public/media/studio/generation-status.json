@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "error_type": "GenerationFailed",
+  "http_status": null,
+  "model": "bytedance/seedance-2.5/text-to-video"
+}
