@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--spec', default='assets/seedance/hero.json')
 parser.add_argument('--output', default='web/public/media')
+parser.add_argument('--attempt', default='1', help='Stable attempt identifier; change only for an intentional new generation')
 args = parser.parse_args()
 spec = json.loads((ROOT / args.spec).read_text())
 assert spec['model'] == 'bytedance/seedance-2.5/text-to-video'
@@ -42,7 +43,7 @@ journal = output / 'request.json'
 request_id = None
 if journal.exists():
     saved = json.loads(journal.read_text())
-    if saved.get('spec_hash') == digest:
+    if saved.get('spec_hash') == digest and saved.get('attempt', '1') == args.attempt:
         request_id = saved.get('request_id')
 
 def safe_detail(value):
@@ -54,11 +55,14 @@ def safe_detail(value):
     text = re.sub(r'https?://\S+', '[url omitted]', text)
     return text[:600]
 
+# Re-running an Action uses the same attempt and resumes its recorded job.
+# An explicit new manual run can opt into a new attempt after a failed job.
+idempotency = digest if args.attempt == '1' else hashlib.sha256(f'{digest}:{args.attempt}'.encode()).hexdigest()[:24]
 with Higgsfield() as api:
     try:
         if not request_id:
-            request_id = api.submit(spec['arguments'], model=spec['model'], idempotency_key=f'l4g-site-{digest}')
-            journal.write_text(json.dumps({'request_id': request_id, 'spec_hash': digest}, indent=2) + '\n')
+            request_id = api.submit(spec['arguments'], model=spec['model'], idempotency_key=f'l4g-site-{idempotency}')
+            journal.write_text(json.dumps({'request_id': request_id, 'spec_hash': digest, 'attempt': args.attempt}, indent=2) + '\n')
         print(f'Seedance request: {request_id}', flush=True)
         result = api.wait(request_id, timeout=1200, poll_interval=5)
     except Exception as error:

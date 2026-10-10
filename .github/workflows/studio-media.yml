@@ -4,6 +4,11 @@ on:
     branches: [main]
     paths: ['assets/seedance/studio.json', 'scripts/generate_site_media.py', '.github/workflows/studio-media.yml']
   workflow_dispatch:
+    inputs:
+      retry_failed:
+        description: 'Start one new paid attempt after resolving the recorded failure (for example topping up API credits)'
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -29,7 +34,8 @@ jobs:
       - name: Generate authorized L4G assets with Seedance 2.5
         env:
           HF_CREDENTIALS: ${{ secrets.HF_CREDENTIALS }}
-        run: python scripts/generate_site_media.py --spec assets/seedance/studio.json --output web/public/media/studio
+          GENERATION_ATTEMPT: ${{ inputs.retry_failed && github.run_id || '1' }}
+        run: python scripts/generate_site_media.py --spec assets/seedance/studio.json --output web/public/media/studio --attempt "$GENERATION_ATTEMPT"
       - name: Save optimized assets in repository
         if: always()
         run: |
