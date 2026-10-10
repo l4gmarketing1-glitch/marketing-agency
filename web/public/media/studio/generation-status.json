@@ -2,5 +2,15 @@
   "status": "failed",
   "error_type": "GenerationFailed",
   "http_status": null,
-  "model": "bytedance/seedance-2.5/text-to-video"
+  "model": "bytedance/seedance-2.5/text-to-video",
+  "request_id": "eda791b0-0174-4e51-99e3-37a3bb93bf6b",
+  "provider_status": "failed",
+  "provider_fields": [
+    "cancel_url",
+    "error",
+    "request_id",
+    "status",
+    "status_url"
+  ],
+  "error": "Your credit balance is too low to complete this request. Please top up your balance and try again."
 }
